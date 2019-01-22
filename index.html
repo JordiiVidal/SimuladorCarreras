@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-fluid">
+
+
+        <div class="row" style="padding:80px 0 80px 0;background: #89acff;">
+            <div class="col-12 text-center" style="color:white;">
+                <h1>SIMULADOR DE CARRERAS</h1>
+                <p>
+                    Cuando empiece la simulación de una carrera, cada medio segundo se deberá avanzar a cada
+                    participante un cierto valor obtenido a partir de las características de cada participante y del
+                    circuito sumando los siguientes valores
+                </p>
+            </div>
+        </div>
+
+
+        <div class="row" style="background: #ebf1ff;padding:50px 0 50px 0;">
+            <div class="col-6" >
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h4>Registrar Participante</h4>
+                    </div>
+                </div>
+                <div class="row" style="padding: 20px 80px 20px 80px ">    
+                    <div class="col-6">
+                        <label class="form-control">Nombre</label>
+                        <label class="form-control">Tracción</label>
+                        <label class="form-control">Velocidad Máx</label>
+                        <label class="form-control">Velocidad Mín</label>
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control" id="nombreP" type="text" style="margin-bottom: 0.5rem">
+                        <select class="form-control" id="traccion" style="margin-bottom: 0.5rem">
+                            <option value="blanda">Blanda</option>
+                            <option value="dura">Dura</option>
+                            <option value="media">Media</option>
+                        </select>
+                        <input class="form-control" id="max" type="number" max="15" min="5" placeholder="máx" style="margin-bottom: 0.5rem">
+                        <input class="form-control" id="min" type="number" max="15" min="5" placeholder="mín" style="margin-bottom: 0.5rem">
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-outline-primary btn-block" id="registrarParticipante">Registrar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h4>Crear Carrera</h4>
+                        </div>
+                    </div>
+                    <div class="row" style="padding: 20px 80px 20px 80px ">    
+                        <div class="col-6">
+                            <label class="form-control">Nombre</label>
+                            <label class="form-control">Timepo</label>
+                            <label class="form-control">Longitud</label>
+                        </div>
+                        <div class="col-6">
+                            <input class="form-control" id="nombreC" type="text" style="margin-bottom: 0.5rem">
+                            <select class="form-control" id="tiempo" style="margin-bottom: 0.5rem">
+                                <option value="lluvioso">Lluvioso</option>
+                                <option value="humedo">Humedo</option>
+                                <option value="seco">Seco</option>
+                            </select>
+                            <input class="form-control" id="longitud" type="number" max="1000" min="100" placeholder="100" style="margin-bottom: 0.5rem">
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-outline-primary btn-block" id="crearCarrera">Crear</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+
+        <div class="row" style="background: #d7e3ff;padding: 50px 10px 50px 10px;">
+            <div class="col-12 text-center" style="padding-bottom: 20px;">
+                <h4>Assignar Participante</h4>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-3">
+                        <label class="form-control">Carrera</label>
+                    </div>
+                    <div class="col-9">
+                        <select class="form-control" id="select-carrera">
+                            <option value="">Seleccionar Carrera</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-3">
+                        <label class="form-control">Participante</label>
+                    </div>
+                    <div class="col-9">
+                        <select class="form-control" id="select-participante">
+                            <option value="">Seleccionar Particpante</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-outline-primary btn-block" id="asignarParticpante">Asignar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row" style="padding: 50px 0 50px 0;">
+            <div class="col-6">
+                <select class="form-control" id="select-carreras">
+                    <option value="">Seleccionar Carrera</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-block btn-outline-danger" id="empezarCarrera">Empezar Carrera</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
