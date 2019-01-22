@@ -105,7 +105,6 @@ function registerParticipante(){
         inputnombre.value = '';
 
         addSelectParticipante(participante.nombre);
-        
     
 
     }else{
@@ -132,8 +131,8 @@ function crearCarrera(){
         inputnombre.value = '';
         
         addSelectCarrera(carrera.nombre);
+        addSelectCarreras(carrera.nombre);
 
-        console.log('Carrera Creada');
 
     }else{
 
@@ -146,13 +145,21 @@ function crearCarrera(){
 function addSelectCarrera(nombre:string){
 
     var selectCarrera:HTMLSelectElement = <HTMLSelectElement>document.getElementById('select-carrera');
-    var selectCarreras:HTMLSelectElement = <HTMLSelectElement>document.getElementById('select-carreras');
     
     var option = document.createElement('option');
     option.value = nombre;
     option.text = nombre;
     
     selectCarrera.add(option);
+}
+function addSelectCarreras(nombre:string){
+
+    var selectCarreras:HTMLSelectElement = <HTMLSelectElement>document.getElementById('select-carreras');
+    
+    var option = document.createElement('option');
+    option.value = nombre;
+    option.text = nombre;
+    
     selectCarreras.add(option);
 }
 

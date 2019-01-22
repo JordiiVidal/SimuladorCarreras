@@ -85,7 +85,7 @@ function crearCarrera() {
         inputlongitud.value = '100';
         inputnombre.value = '';
         addSelectCarrera(carrera.nombre);
-        console.log('Carrera Creada');
+        addSelectCarreras(carrera.nombre);
     }
     else {
         console.log('Completar campos Carrera');
@@ -93,11 +93,16 @@ function crearCarrera() {
 }
 function addSelectCarrera(nombre) {
     var selectCarrera = document.getElementById('select-carrera');
-    var selectCarreras = document.getElementById('select-carreras');
     var option = document.createElement('option');
     option.value = nombre;
     option.text = nombre;
     selectCarrera.add(option);
+}
+function addSelectCarreras(nombre) {
+    var selectCarreras = document.getElementById('select-carreras');
+    var option = document.createElement('option');
+    option.value = nombre;
+    option.text = nombre;
     selectCarreras.add(option);
 }
 function addSelectParticipante(nombre) {
