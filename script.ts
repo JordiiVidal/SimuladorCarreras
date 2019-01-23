@@ -13,6 +13,7 @@ class Carrera{
     longitud:number;
     particpantes:Array<Participante>;
     ganador:Participante;
+    finalizada:boolean;
 
     constructor(nombre:string, tiempo:string,longitud:number){
         
@@ -20,6 +21,8 @@ class Carrera{
         this.tiempo = tiempo;
         this.particpantes = [];
         this.ganador = new Participante('','',0,0);
+        this.ganador.addPosicion(this.nombre,0);
+        this.finalizada = false;
 
         if(longitud>=100 && longitud<=1000){
 
@@ -32,9 +35,11 @@ class Carrera{
         }
 
     }
+
     restart(){
 
         this.ganador = new Participante('','',0,0);
+        this.ganador.addPosicion(this.nombre,0);
         this.particpantes = [];
 
     }
@@ -52,7 +57,9 @@ class Carrera{
 
         if(!exist){
 
+            participante.addPosicion(this.nombre,0);
             this.particpantes.push(participante);
+            
 
         }else{
             console.log('Ya esta registrado');
@@ -69,13 +76,14 @@ class Participante{
     traccion:string;
     velocidadMax:number;
     velocidadMin:number;
-    posicion:number;
-
+    posiciones:Array<any>;
+    
     constructor(nombre:string,traccion:string,velocidadmax:number,velocidadmin:number){
         
         this.nombre = nombre;
         this.traccion = traccion;
-        this.posicion = 0;
+        this.posiciones = [];
+        
         
         if(velocidadmax >= 5 && velocidadmax <=15){
             this.velocidadMax = velocidadmax;
@@ -86,19 +94,18 @@ class Participante{
 
     }
 
-    setPosicion(posicion:number){
+    addPosicion(nombreCarrera:string, posicion:number){
 
-        this.posicion = this.posicion + posicion;
-
-    }
-
-    clearPosicion(){
-
-        this.posicion = 0;
+        this.posiciones[nombreCarrera] = posicion;
 
     }
 
-    
+    setPosicion(nombreCarrera:string, posicion:number){
+
+        this.posiciones[nombreCarrera] += posicion;
+
+    }
+
 }
 
 var arrayParticipantes = Array<Participante>();
@@ -109,6 +116,16 @@ let btnCrearCarrera = <HTMLElement>document.getElementById("crearCarrera");
 
 btnRegisterParticipante.addEventListener('click',registerParticipante,false);
 btnCrearCarrera.addEventListener('click',crearCarrera,false);
+
+let btnAsignarParticipante = <HTMLElement>document.getElementById("asignarParticpante");
+
+btnAsignarParticipante.addEventListener('click',asignarParticpante,false);
+
+let btnEmpezarCarrera= <HTMLElement>document.getElementById("empezarCarrera");
+
+btnEmpezarCarrera.addEventListener('click',empezarCarrera,false);
+
+var interval;
 
 function registerParticipante(){
 
@@ -197,11 +214,6 @@ function addSelectParticipante(nombre:string){
     selectCarrera.add(option);
 }
 
-let btnAsignarParticipante = <HTMLElement>document.getElementById("asignarParticpante");
-
-btnAsignarParticipante.addEventListener('click',asignarParticpante,false);
-
-
 function asignarParticpante(){
 
     let inputparticipante:HTMLInputElement = <HTMLInputElement>document.getElementById('select-participante');
@@ -224,17 +236,13 @@ function asignarParticpante(){
 
 }
 
-let btnEmpezarCarrera= <HTMLElement>document.getElementById("empezarCarrera");
-
-btnEmpezarCarrera.addEventListener('click',empezarCarrera,false);
-
-var interval;
-
 function empezarCarrera(){
 
     let inputcarrera:HTMLInputElement = <HTMLInputElement>document.getElementById('select-carreras');
     
     var carrera = _buscarCarrera(inputcarrera.value);
+
+    console.log(carrera);
 
     interval = window.setInterval(function(){
         _simulacionCarrera(carrera);
@@ -257,32 +265,43 @@ function _buscarCarrera(nombre:string){
 
 function _simulacionCarrera(carrera:Carrera){
 
-    for(let key in carrera.particpantes){
+    console.log('simulacion');
 
-        let posicion = _velocidad(carrera.particpantes[key].velocidadMax,carrera.particpantes[key].velocidadMin)+_checkTraccion(carrera.particpantes[key].traccion,carrera.tiempo);
+    if( carrera.particpantes.length > 0){
 
-        carrera.particpantes[key].setPosicion(posicion);
+        for(let key in carrera.particpantes){
 
-        console.log(carrera.particpantes[key].posicion);
-
-        if(carrera.ganador.posicion < carrera.particpantes[key].posicion){
-
-            carrera.ganador = carrera.particpantes[key];
-
+            let posicion = _velocidad(carrera.particpantes[key].velocidadMax,carrera.particpantes[key].velocidadMin)+_checkTraccion(carrera.particpantes[key].traccion,carrera.tiempo);
+    
+            carrera.particpantes[key].setPosicion(carrera.nombre,posicion);
+    
+            console.log(carrera.particpantes[key]);
+            
+            if(carrera.particpantes[key].posiciones[carrera.nombre] > carrera.ganador.posiciones[carrera.nombre]){
+                
+                carrera.ganador = carrera.particpantes[key];
+    
+            }
+    
         }
+    
+        if(carrera.ganador.posiciones[carrera.nombre] >= carrera.longitud){
+    
+            console.log(carrera.ganador.nombre+' ha ganado la carrera');
+    
+            carrera.restart();
+    
+            clearInterval(interval);
+    
+        }
+    }else{
 
-    }
-
-    if(carrera.ganador.posicion >= carrera.longitud){
-
-        console.log(carrera.ganador.nombre+' ha ganado la carrera');
-
-        carrera.restart();
+        console.log('No hay Participantes');
 
         clearInterval(interval);
 
-
     }
+    
 }
 
 function _velocidad(max:number,min:number){

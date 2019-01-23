@@ -16,6 +16,8 @@ var Carrera = /** @class */ (function () {
         this.tiempo = tiempo;
         this.particpantes = [];
         this.ganador = new Participante('', '', 0, 0);
+        this.ganador.addPosicion(this.nombre, 0);
+        this.finalizada = false;
         if (longitud >= 100 && longitud <= 1000) {
             this.longitud = longitud;
         }
@@ -25,6 +27,7 @@ var Carrera = /** @class */ (function () {
     }
     Carrera.prototype.restart = function () {
         this.ganador = new Participante('', '', 0, 0);
+        this.ganador.addPosicion(this.nombre, 0);
         this.particpantes = [];
     };
     Carrera.prototype.addParticipante = function (participante) {
@@ -36,6 +39,7 @@ var Carrera = /** @class */ (function () {
             }
         }
         if (!exist) {
+            participante.addPosicion(this.nombre, 0);
             this.particpantes.push(participante);
         }
         else {
@@ -48,7 +52,7 @@ var Participante = /** @class */ (function () {
     function Participante(nombre, traccion, velocidadmax, velocidadmin) {
         this.nombre = nombre;
         this.traccion = traccion;
-        this.posicion = 0;
+        this.posiciones = [];
         if (velocidadmax >= 5 && velocidadmax <= 15) {
             this.velocidadMax = velocidadmax;
         }
@@ -56,11 +60,11 @@ var Participante = /** @class */ (function () {
             this.velocidadMin = velocidadmin;
         }
     }
-    Participante.prototype.setPosicion = function (posicion) {
-        this.posicion = this.posicion + posicion;
+    Participante.prototype.addPosicion = function (nombreCarrera, posicion) {
+        this.posiciones[nombreCarrera] = posicion;
     };
-    Participante.prototype.clearPosicion = function () {
-        this.posicion = 0;
+    Participante.prototype.setPosicion = function (nombreCarrera, posicion) {
+        this.posiciones[nombreCarrera] += posicion;
     };
     return Participante;
 }());
@@ -70,6 +74,11 @@ var btnRegisterParticipante = document.getElementById("registrarParticipante");
 var btnCrearCarrera = document.getElementById("crearCarrera");
 btnRegisterParticipante.addEventListener('click', registerParticipante, false);
 btnCrearCarrera.addEventListener('click', crearCarrera, false);
+var btnAsignarParticipante = document.getElementById("asignarParticpante");
+btnAsignarParticipante.addEventListener('click', asignarParticpante, false);
+var btnEmpezarCarrera = document.getElementById("empezarCarrera");
+btnEmpezarCarrera.addEventListener('click', empezarCarrera, false);
+var interval;
 function registerParticipante() {
     var inputnombre = document.getElementById('nombreP');
     var inputtraccion = document.getElementById('traccion');
@@ -124,8 +133,6 @@ function addSelectParticipante(nombre) {
     option.text = nombre;
     selectCarrera.add(option);
 }
-var btnAsignarParticipante = document.getElementById("asignarParticpante");
-btnAsignarParticipante.addEventListener('click', asignarParticpante, false);
 function asignarParticpante() {
     var inputparticipante = document.getElementById('select-participante');
     var inputcarrera = document.getElementById('select-carrera');
@@ -139,12 +146,10 @@ function asignarParticpante() {
         }
     }
 }
-var btnEmpezarCarrera = document.getElementById("empezarCarrera");
-btnEmpezarCarrera.addEventListener('click', empezarCarrera, false);
-var interval;
 function empezarCarrera() {
     var inputcarrera = document.getElementById('select-carreras');
     var carrera = _buscarCarrera(inputcarrera.value);
+    console.log(carrera);
     interval = window.setInterval(function () {
         _simulacionCarrera(carrera);
     }, 500);
@@ -157,17 +162,24 @@ function _buscarCarrera(nombre) {
     }
 }
 function _simulacionCarrera(carrera) {
-    for (var key in carrera.particpantes) {
-        var posicion = _velocidad(carrera.particpantes[key].velocidadMax, carrera.particpantes[key].velocidadMin) + _checkTraccion(carrera.particpantes[key].traccion, carrera.tiempo);
-        carrera.particpantes[key].setPosicion(posicion);
-        console.log(carrera.particpantes[key].posicion);
-        if (carrera.ganador.posicion < carrera.particpantes[key].posicion) {
-            carrera.ganador = carrera.particpantes[key];
+    console.log('simulacion');
+    if (carrera.particpantes.length > 0) {
+        for (var key in carrera.particpantes) {
+            var posicion = _velocidad(carrera.particpantes[key].velocidadMax, carrera.particpantes[key].velocidadMin) + _checkTraccion(carrera.particpantes[key].traccion, carrera.tiempo);
+            carrera.particpantes[key].setPosicion(carrera.nombre, posicion);
+            console.log(carrera.particpantes[key]);
+            if (carrera.particpantes[key].posiciones[carrera.nombre] > carrera.ganador.posiciones[carrera.nombre]) {
+                carrera.ganador = carrera.particpantes[key];
+            }
+        }
+        if (carrera.ganador.posiciones[carrera.nombre] >= carrera.longitud) {
+            console.log(carrera.ganador.nombre + ' ha ganado la carrera');
+            carrera.restart();
+            clearInterval(interval);
         }
     }
-    if (carrera.ganador.posicion >= carrera.longitud) {
-        console.log(carrera.ganador.nombre + ' ha ganado la carrera');
-        carrera.restart();
+    else {
+        console.log('No hay Participantes');
         clearInterval(interval);
     }
 }
