@@ -44,6 +44,7 @@ class Carrera{
 
     }
 
+
     addParticipante(participante:Participante){
         
         var exist = false;
@@ -92,6 +93,10 @@ class Participante{
             this.velocidadMin = velocidadmin;
         }
 
+    }
+
+    htmlParticipante(){
+        return "<div class='carretera m-2 carretera'><div class='coche participante-'"+this.nombre+"'><img src='assets/coche.png' style='width: 100%;'></div></div>";
     }
 
     addPosicion(nombreCarrera:string, posicion:number){

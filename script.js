@@ -60,6 +60,9 @@ var Participante = /** @class */ (function () {
             this.velocidadMin = velocidadmin;
         }
     }
+    Participante.prototype.htmlParticipante = function () {
+        return "<div class='carretera m-2 carretera'><div class='coche participante-'" + this.nombre + "'><img src='assets/coche.png' style='width: 100%;'></div></div>";
+    };
     Participante.prototype.addPosicion = function (nombreCarrera, posicion) {
         this.posiciones[nombreCarrera] = posicion;
     };
