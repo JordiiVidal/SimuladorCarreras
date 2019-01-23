@@ -15,6 +15,7 @@ var Carrera = /** @class */ (function () {
         this.nombre = nombre;
         this.tiempo = tiempo;
         this.particpantes = [];
+        this.ganador = new Participante('', '', 0, 0);
         if (longitud >= 100 && longitud <= 1000) {
             this.longitud = longitud;
         }
@@ -22,6 +23,10 @@ var Carrera = /** @class */ (function () {
             console.log('Longitud incorrecta');
         }
     }
+    Carrera.prototype.restart = function () {
+        this.ganador = new Participante('', '', 0, 0);
+        this.particpantes = [];
+    };
     Carrera.prototype.addParticipante = function (participante) {
         var exist = false;
         for (var key in this.particpantes) {
@@ -43,6 +48,7 @@ var Participante = /** @class */ (function () {
     function Participante(nombre, traccion, velocidadmax, velocidadmin) {
         this.nombre = nombre;
         this.traccion = traccion;
+        this.posicion = 0;
         if (velocidadmax >= 5 && velocidadmax <= 15) {
             this.velocidadMax = velocidadmax;
         }
@@ -50,6 +56,12 @@ var Participante = /** @class */ (function () {
             this.velocidadMin = velocidadmin;
         }
     }
+    Participante.prototype.setPosicion = function (posicion) {
+        this.posicion = this.posicion + posicion;
+    };
+    Participante.prototype.clearPosicion = function () {
+        this.posicion = 0;
+    };
     return Participante;
 }());
 var arrayParticipantes = Array();
@@ -61,15 +73,15 @@ btnCrearCarrera.addEventListener('click', crearCarrera, false);
 function registerParticipante() {
     var inputnombre = document.getElementById('nombreP');
     var inputtraccion = document.getElementById('traccion');
-    var inputmax = document.getElementById('min');
-    var inputmin = document.getElementById('max');
+    var inputmin = document.getElementById('min');
+    var inputmax = document.getElementById('max');
     if (inputmax.value != '' && inputnombre.value != '' && inputmin.value != '' && inputtraccion.value != '') {
         var participante = new Participante(inputnombre.value, inputtraccion.value, parseInt(inputmax.value), parseInt(inputmin.value));
         arrayParticipantes.push(participante);
+        addSelectParticipante(participante.nombre);
         inputmax.value = '15';
         inputmin.value = '5';
         inputnombre.value = '';
-        addSelectParticipante(participante.nombre);
     }
     else {
         console.log('Completar Registro');
@@ -129,5 +141,67 @@ function asignarParticpante() {
 }
 var btnEmpezarCarrera = document.getElementById("empezarCarrera");
 btnEmpezarCarrera.addEventListener('click', empezarCarrera, false);
+var interval;
 function empezarCarrera() {
+    var inputcarrera = document.getElementById('select-carreras');
+    var carrera = _buscarCarrera(inputcarrera.value);
+    interval = window.setInterval(function () {
+        _simulacionCarrera(carrera);
+    }, 500);
+}
+function _buscarCarrera(nombre) {
+    for (var key in arrayCarreras) {
+        if (arrayCarreras[key].nombre === nombre) {
+            return arrayCarreras[key];
+        }
+    }
+}
+function _simulacionCarrera(carrera) {
+    for (var key in carrera.particpantes) {
+        var posicion = _velocidad(carrera.particpantes[key].velocidadMax, carrera.particpantes[key].velocidadMin) + _checkTraccion(carrera.particpantes[key].traccion, carrera.tiempo);
+        carrera.particpantes[key].setPosicion(posicion);
+        console.log(carrera.particpantes[key].posicion);
+        if (carrera.ganador.posicion < carrera.particpantes[key].posicion) {
+            carrera.ganador = carrera.particpantes[key];
+        }
+    }
+    if (carrera.ganador.posicion >= carrera.longitud) {
+        console.log(carrera.ganador.nombre + ' ha ganado la carrera');
+        carrera.restart();
+        clearInterval(interval);
+    }
+}
+function _velocidad(max, min) {
+    return Math.random() * (max - min) + min;
+}
+function _checkTraccion(traccion, tiempo) {
+    switch (traccion) {
+        case 'mediana':
+            if (tiempo === 'humedo') {
+                return 4;
+            }
+            else {
+                return 1;
+            }
+        case 'blanda':
+            if (tiempo === 'lluvioso') {
+                return 5;
+            }
+            else if (tiempo === 'humedo') {
+                return 1;
+            }
+            else {
+                return -2;
+            }
+        case 'dura':
+            if (tiempo === 'seco') {
+                return 5;
+            }
+            else if (tiempo === 'humedo') {
+                return 1;
+            }
+            else {
+                return -2;
+            }
+    }
 }

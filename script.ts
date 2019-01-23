@@ -19,6 +19,7 @@ class Carrera{
         this.nombre = nombre;
         this.tiempo = tiempo;
         this.particpantes = [];
+        this.ganador = new Participante('','',0,0);
 
         if(longitud>=100 && longitud<=1000){
 
@@ -29,6 +30,12 @@ class Carrera{
             console.log('Longitud incorrecta');
 
         }
+
+    }
+    restart(){
+
+        this.ganador = new Participante('','',0,0);
+        this.particpantes = [];
 
     }
 
@@ -44,7 +51,9 @@ class Carrera{
         }
 
         if(!exist){
+
             this.particpantes.push(participante);
+
         }else{
             console.log('Ya esta registrado');
         }
@@ -60,11 +69,13 @@ class Participante{
     traccion:string;
     velocidadMax:number;
     velocidadMin:number;
+    posicion:number;
 
     constructor(nombre:string,traccion:string,velocidadmax:number,velocidadmin:number){
         
         this.nombre = nombre;
         this.traccion = traccion;
+        this.posicion = 0;
         
         if(velocidadmax >= 5 && velocidadmax <=15){
             this.velocidadMax = velocidadmax;
@@ -72,6 +83,18 @@ class Participante{
         if(velocidadmin >= 5 && velocidadmax>velocidadmin){
             this.velocidadMin = velocidadmin;
         }
+
+    }
+
+    setPosicion(posicion:number){
+
+        this.posicion = this.posicion + posicion;
+
+    }
+
+    clearPosicion(){
+
+        this.posicion = 0;
 
     }
 
@@ -91,8 +114,8 @@ function registerParticipante(){
 
     let inputnombre:HTMLInputElement = <HTMLInputElement>document.getElementById('nombreP');
     let inputtraccion:HTMLInputElement = <HTMLInputElement>document.getElementById('traccion');
-    let inputmax:HTMLInputElement = <HTMLInputElement>document.getElementById('min');
-    let inputmin:HTMLInputElement = <HTMLInputElement>document.getElementById('max');
+    let inputmin:HTMLInputElement = <HTMLInputElement>document.getElementById('min');
+    let inputmax:HTMLInputElement = <HTMLInputElement>document.getElementById('max');
     
     if(inputmax.value != '' && inputnombre.value != '' && inputmin.value != '' && inputtraccion.value !=''){
         
@@ -100,11 +123,11 @@ function registerParticipante(){
 
         arrayParticipantes.push(participante);
 
+        addSelectParticipante(participante.nombre);
+
         inputmax.value = '15';
         inputmin.value = '5';
         inputnombre.value = '';
-
-        addSelectParticipante(participante.nombre);
     
 
     }else{
@@ -205,7 +228,96 @@ let btnEmpezarCarrera= <HTMLElement>document.getElementById("empezarCarrera");
 
 btnEmpezarCarrera.addEventListener('click',empezarCarrera,false);
 
+var interval;
+
 function empezarCarrera(){
+
+    let inputcarrera:HTMLInputElement = <HTMLInputElement>document.getElementById('select-carreras');
     
+    var carrera = _buscarCarrera(inputcarrera.value);
+
+    interval = window.setInterval(function(){
+        _simulacionCarrera(carrera);
+    },500);
+    
+}
+
+function _buscarCarrera(nombre:string){
+
+    for(let key in arrayCarreras){
+
+        if(arrayCarreras[key].nombre === nombre){
+
+            return arrayCarreras[key];
+
+        }
+    }
+
+}
+
+function _simulacionCarrera(carrera:Carrera){
+
+    for(let key in carrera.particpantes){
+
+        let posicion = _velocidad(carrera.particpantes[key].velocidadMax,carrera.particpantes[key].velocidadMin)+_checkTraccion(carrera.particpantes[key].traccion,carrera.tiempo);
+
+        carrera.particpantes[key].setPosicion(posicion);
+
+        console.log(carrera.particpantes[key].posicion);
+
+        if(carrera.ganador.posicion < carrera.particpantes[key].posicion){
+
+            carrera.ganador = carrera.particpantes[key];
+
+        }
+
+    }
+
+    if(carrera.ganador.posicion >= carrera.longitud){
+
+        console.log(carrera.ganador.nombre+' ha ganado la carrera');
+
+        carrera.restart();
+
+        clearInterval(interval);
+
+
+    }
+}
+
+function _velocidad(max:number,min:number){
+
+   return Math.random() * (max - min) + min;
+
+}
+
+function _checkTraccion(traccion:string, tiempo:string){
+
+    switch(traccion){
+        case 'mediana':
+            if(tiempo === 'humedo'){
+                return 4;
+            }else{
+                return 1;
+            }
+
+        case 'blanda':
+            if(tiempo === 'lluvioso'){
+                return 5;
+            }else if(tiempo === 'humedo'){
+                return 1;
+            }else{
+                return -2;
+            }
+
+        case 'dura':
+            if(tiempo === 'seco'){
+                return 5;
+            }else if(tiempo === 'humedo'){
+                return 1;
+            }else{
+                return -2;
+            }
+    }
 }
 
