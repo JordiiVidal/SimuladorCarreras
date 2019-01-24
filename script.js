@@ -25,6 +25,10 @@ var Carrera = /** @class */ (function () {
             console.log('Longitud incorrecta');
         }
     }
+    Carrera.prototype.htmlCarrera = function () {
+        var container = document.getElementById("circuito");
+        container.innerHTML = "<div class='carrera p-5' id='carrera-" + this.nombre + "'></div>";
+    };
     Carrera.prototype.restart = function () {
         this.ganador = new Participante('', '', 0, 0);
         this.ganador.addPosicion(this.nombre, 0);
@@ -60,8 +64,12 @@ var Participante = /** @class */ (function () {
             this.velocidadMin = velocidadmin;
         }
     }
-    Participante.prototype.htmlParticipante = function () {
-        return "<div class='carretera m-2 carretera'><div class='coche participante-'" + this.nombre + "'><img src='assets/coche.png' style='width: 100%;'></div></div>";
+    Participante.prototype.htmlParticipante = function (nombreCarrera) {
+        var container = document.getElementById("carrera-" + nombreCarrera);
+        container.innerHTML += "<div class='carretera m-2 carretera'><div class='coche' id='participante-" + this.nombre + "'><img src='assets/coche.png' style='width: 100%;'></div></div>";
+    };
+    Participante.prototype.aumentarPosicion = function () {
+        var container = document.getElementById("participante-" + this.nombre);
     };
     Participante.prototype.addPosicion = function (nombreCarrera, posicion) {
         this.posiciones[nombreCarrera] = posicion;
@@ -153,6 +161,10 @@ function empezarCarrera() {
     var inputcarrera = document.getElementById('select-carreras');
     var carrera = _buscarCarrera(inputcarrera.value);
     console.log(carrera);
+    carrera.htmlCarrera();
+    for (var key in carrera.particpantes) {
+        carrera.particpantes[key].htmlParticipante(carrera.nombre);
+    }
     interval = window.setInterval(function () {
         _simulacionCarrera(carrera);
     }, 500);

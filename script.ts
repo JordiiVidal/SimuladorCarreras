@@ -36,6 +36,14 @@ class Carrera{
 
     }
 
+    htmlCarrera(){
+
+        let container = <HTMLElement>document.getElementById("circuito");
+
+        container.innerHTML = "<div class='carrera p-5' id='carrera-"+this.nombre+"'></div>";
+
+    }
+
     restart(){
 
         this.ganador = new Participante('','',0,0);
@@ -95,8 +103,18 @@ class Participante{
 
     }
 
-    htmlParticipante(){
-        return "<div class='carretera m-2 carretera'><div class='coche participante-'"+this.nombre+"'><img src='assets/coche.png' style='width: 100%;'></div></div>";
+    htmlParticipante(nombreCarrera:string){
+
+        let container = <HTMLElement>document.getElementById("carrera-"+nombreCarrera);
+
+        container.innerHTML += "<div class='carretera m-2 carretera'><div class='coche' id='participante-"+this.nombre+"'><img src='assets/coche.png' style='width: 100%;'></div></div>";
+
+    }
+
+    aumentarPosicion(){
+
+        let container = <HTMLElement>document.getElementById("participante-"+this.nombre);
+
     }
 
     addPosicion(nombreCarrera:string, posicion:number){
@@ -248,6 +266,12 @@ function empezarCarrera(){
     var carrera = _buscarCarrera(inputcarrera.value);
 
     console.log(carrera);
+
+    carrera.htmlCarrera();
+
+    for(let key in carrera.particpantes){
+        carrera.particpantes[key].htmlParticipante(carrera.nombre);
+    }
 
     interval = window.setInterval(function(){
         _simulacionCarrera(carrera);
