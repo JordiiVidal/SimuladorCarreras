@@ -52,6 +52,14 @@ class Carrera{
 
     }
 
+    mostrarGanador(){
+
+        let container = <HTMLElement>document.getElementById("ganador");
+
+        container.innerHTML = "<div class='jumbotron jumbotron-fluid'><div class='container'><h1 class='display-4'>"+this.ganador.nombre+" ha ganado la carrera "+this.nombre+"</h1></div></div>";
+
+    }
+
 
     addParticipante(participante:Participante){
         
@@ -111,12 +119,6 @@ class Participante{
 
     }
 
-    aumentarPosicion(){
-
-        let container = <HTMLElement>document.getElementById("participante-"+this.nombre);
-
-    }
-
     addPosicion(nombreCarrera:string, posicion:number){
 
         this.posiciones[nombreCarrera] = posicion;
@@ -126,6 +128,20 @@ class Participante{
     setPosicion(nombreCarrera:string, posicion:number){
 
         this.posiciones[nombreCarrera] += posicion;
+
+    }
+
+    moverParticipante(longitud:number,nombreC:string){
+
+        let participante = <HTMLElement>document.getElementById("participante-"+this.nombre);
+
+        let porcentaje = (this.posiciones[nombreC] * 100) / longitud;
+
+        if(porcentaje > 100){
+            participante.style.marginLeft = '100%'; 
+        }else{
+            participante.style.marginLeft = porcentaje+'%'; 
+        }
 
     }
 
@@ -265,12 +281,12 @@ function empezarCarrera(){
     
     var carrera = _buscarCarrera(inputcarrera.value);
 
-    console.log(carrera);
-
     carrera.htmlCarrera();
 
     for(let key in carrera.particpantes){
+
         carrera.particpantes[key].htmlParticipante(carrera.nombre);
+
     }
 
     interval = window.setInterval(function(){
@@ -304,7 +320,7 @@ function _simulacionCarrera(carrera:Carrera){
     
             carrera.particpantes[key].setPosicion(carrera.nombre,posicion);
     
-            console.log(carrera.particpantes[key]);
+            carrera.particpantes[key].moverParticipante(carrera.longitud,carrera.nombre);
             
             if(carrera.particpantes[key].posiciones[carrera.nombre] > carrera.ganador.posiciones[carrera.nombre]){
                 
@@ -317,6 +333,8 @@ function _simulacionCarrera(carrera:Carrera){
         if(carrera.ganador.posiciones[carrera.nombre] >= carrera.longitud){
     
             console.log(carrera.ganador.nombre+' ha ganado la carrera');
+
+            carrera.mostrarGanador();
     
             carrera.restart();
     

@@ -34,6 +34,10 @@ var Carrera = /** @class */ (function () {
         this.ganador.addPosicion(this.nombre, 0);
         this.particpantes = [];
     };
+    Carrera.prototype.mostrarGanador = function () {
+        var container = document.getElementById("ganador");
+        container.innerHTML = "<div class='jumbotron jumbotron-fluid'><div class='container'><h1 class='display-4'>" + this.ganador.nombre + " ha ganado la carrera " + this.nombre + "</h1></div></div>";
+    };
     Carrera.prototype.addParticipante = function (participante) {
         var exist = false;
         for (var key in this.particpantes) {
@@ -68,14 +72,21 @@ var Participante = /** @class */ (function () {
         var container = document.getElementById("carrera-" + nombreCarrera);
         container.innerHTML += "<div class='carretera m-2 carretera'><div class='coche' id='participante-" + this.nombre + "'><img src='assets/coche.png' style='width: 100%;'></div></div>";
     };
-    Participante.prototype.aumentarPosicion = function () {
-        var container = document.getElementById("participante-" + this.nombre);
-    };
     Participante.prototype.addPosicion = function (nombreCarrera, posicion) {
         this.posiciones[nombreCarrera] = posicion;
     };
     Participante.prototype.setPosicion = function (nombreCarrera, posicion) {
         this.posiciones[nombreCarrera] += posicion;
+    };
+    Participante.prototype.moverParticipante = function (longitud, nombreC) {
+        var participante = document.getElementById("participante-" + this.nombre);
+        var porcentaje = (this.posiciones[nombreC] * 100) / longitud;
+        if (porcentaje > 100) {
+            participante.style.marginLeft = '100%';
+        }
+        else {
+            participante.style.marginLeft = porcentaje + '%';
+        }
     };
     return Participante;
 }());
@@ -160,7 +171,6 @@ function asignarParticpante() {
 function empezarCarrera() {
     var inputcarrera = document.getElementById('select-carreras');
     var carrera = _buscarCarrera(inputcarrera.value);
-    console.log(carrera);
     carrera.htmlCarrera();
     for (var key in carrera.particpantes) {
         carrera.particpantes[key].htmlParticipante(carrera.nombre);
@@ -182,13 +192,14 @@ function _simulacionCarrera(carrera) {
         for (var key in carrera.particpantes) {
             var posicion = _velocidad(carrera.particpantes[key].velocidadMax, carrera.particpantes[key].velocidadMin) + _checkTraccion(carrera.particpantes[key].traccion, carrera.tiempo);
             carrera.particpantes[key].setPosicion(carrera.nombre, posicion);
-            console.log(carrera.particpantes[key]);
+            carrera.particpantes[key].moverParticipante(carrera.longitud, carrera.nombre);
             if (carrera.particpantes[key].posiciones[carrera.nombre] > carrera.ganador.posiciones[carrera.nombre]) {
                 carrera.ganador = carrera.particpantes[key];
             }
         }
         if (carrera.ganador.posiciones[carrera.nombre] >= carrera.longitud) {
             console.log(carrera.ganador.nombre + ' ha ganado la carrera');
+            carrera.mostrarGanador();
             carrera.restart();
             clearInterval(interval);
         }
