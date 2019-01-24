@@ -1,3 +1,6 @@
+#circuito{
+    border: 1px solid white;
+}
 .carretera{
     height: 100px;background: #7f7f7f;border: 1px solid #7f7f7f; background-image: url(assets/road.jpg);
 }

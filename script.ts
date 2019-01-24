@@ -47,8 +47,14 @@ class Carrera{
     restart(){
 
         this.ganador = new Participante('','',0,0);
+
         this.ganador.addPosicion(this.nombre,0);
+
         this.particpantes = [];
+
+        let container = <HTMLElement>document.getElementById("circuito");
+
+        container.innerHTML = "";
 
     }
 
@@ -56,7 +62,7 @@ class Carrera{
 
         let container = <HTMLElement>document.getElementById("ganador");
 
-        container.innerHTML = "<div class='jumbotron jumbotron-fluid'><div class='container'><h1 class='display-4'>"+this.ganador.nombre+" ha ganado la carrera "+this.nombre+"</h1></div></div>";
+        container.innerHTML = "<div class='jumbotron jumbotron-fluid'><div class='container'><h1 class='display-4'>"+this.ganador.nombre+" ha ganado la carrera "+this.nombre+"</h1><p class='lead'>Estado del circuito "+this.tiempo+"</p><p class='lead'>La traccion era "+this.ganador.traccion+"</p></div></div>";
 
     }
 
@@ -145,6 +151,7 @@ class Participante{
 
     }
 
+
 }
 
 var arrayParticipantes = Array<Participante>();
@@ -165,6 +172,7 @@ let btnEmpezarCarrera= <HTMLElement>document.getElementById("empezarCarrera");
 btnEmpezarCarrera.addEventListener('click',empezarCarrera,false);
 
 var interval;
+var intervalInterior;
 
 function registerParticipante(){
 
@@ -317,8 +325,9 @@ function _simulacionCarrera(carrera:Carrera){
         for(let key in carrera.particpantes){
 
             let posicion = _velocidad(carrera.particpantes[key].velocidadMax,carrera.particpantes[key].velocidadMin)+_checkTraccion(carrera.particpantes[key].traccion,carrera.tiempo);
-    
+            
             carrera.particpantes[key].setPosicion(carrera.nombre,posicion);
+
     
             carrera.particpantes[key].moverParticipante(carrera.longitud,carrera.nombre);
             

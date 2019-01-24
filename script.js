@@ -33,10 +33,12 @@ var Carrera = /** @class */ (function () {
         this.ganador = new Participante('', '', 0, 0);
         this.ganador.addPosicion(this.nombre, 0);
         this.particpantes = [];
+        var container = document.getElementById("circuito");
+        container.innerHTML = "";
     };
     Carrera.prototype.mostrarGanador = function () {
         var container = document.getElementById("ganador");
-        container.innerHTML = "<div class='jumbotron jumbotron-fluid'><div class='container'><h1 class='display-4'>" + this.ganador.nombre + " ha ganado la carrera " + this.nombre + "</h1></div></div>";
+        container.innerHTML = "<div class='jumbotron jumbotron-fluid'><div class='container'><h1 class='display-4'>" + this.ganador.nombre + " ha ganado la carrera " + this.nombre + "</h1><p class='lead'>Estado del circuito " + this.tiempo + "</p><p class='lead'>La traccion era " + this.ganador.traccion + "</p></div></div>";
     };
     Carrera.prototype.addParticipante = function (participante) {
         var exist = false;
@@ -101,6 +103,7 @@ btnAsignarParticipante.addEventListener('click', asignarParticpante, false);
 var btnEmpezarCarrera = document.getElementById("empezarCarrera");
 btnEmpezarCarrera.addEventListener('click', empezarCarrera, false);
 var interval;
+var intervalInterior;
 function registerParticipante() {
     var inputnombre = document.getElementById('nombreP');
     var inputtraccion = document.getElementById('traccion');
