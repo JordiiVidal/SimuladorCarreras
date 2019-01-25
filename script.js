@@ -103,7 +103,6 @@ btnAsignarParticipante.addEventListener('click', asignarParticpante, false);
 var btnEmpezarCarrera = document.getElementById("empezarCarrera");
 btnEmpezarCarrera.addEventListener('click', empezarCarrera, false);
 var interval;
-var intervalInterior;
 function registerParticipante() {
     var inputnombre = document.getElementById('nombreP');
     var inputtraccion = document.getElementById('traccion');
@@ -173,6 +172,8 @@ function asignarParticpante() {
 }
 function empezarCarrera() {
     var inputcarrera = document.getElementById('select-carreras');
+    var container = document.getElementById("ganador");
+    container.innerHTML = "";
     var carrera = _buscarCarrera(inputcarrera.value);
     carrera.htmlCarrera();
     for (var key in carrera.particpantes) {
@@ -217,7 +218,7 @@ function _velocidad(max, min) {
 }
 function _checkTraccion(traccion, tiempo) {
     switch (traccion) {
-        case 'mediana':
+        case 'media':
             if (tiempo === 'humedo') {
                 return 4;
             }

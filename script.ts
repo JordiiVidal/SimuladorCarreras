@@ -172,7 +172,6 @@ let btnEmpezarCarrera= <HTMLElement>document.getElementById("empezarCarrera");
 btnEmpezarCarrera.addEventListener('click',empezarCarrera,false);
 
 var interval;
-var intervalInterior;
 
 function registerParticipante(){
 
@@ -287,6 +286,10 @@ function empezarCarrera(){
 
     let inputcarrera:HTMLInputElement = <HTMLInputElement>document.getElementById('select-carreras');
     
+    let container = <HTMLElement>document.getElementById("ganador");
+
+    container.innerHTML = "";
+    
     var carrera = _buscarCarrera(inputcarrera.value);
 
     carrera.htmlCarrera();
@@ -325,10 +328,9 @@ function _simulacionCarrera(carrera:Carrera){
         for(let key in carrera.particpantes){
 
             let posicion = _velocidad(carrera.particpantes[key].velocidadMax,carrera.particpantes[key].velocidadMin)+_checkTraccion(carrera.particpantes[key].traccion,carrera.tiempo);
-            
+
             carrera.particpantes[key].setPosicion(carrera.nombre,posicion);
 
-    
             carrera.particpantes[key].moverParticipante(carrera.longitud,carrera.nombre);
             
             if(carrera.particpantes[key].posiciones[carrera.nombre] > carrera.ganador.posiciones[carrera.nombre]){
@@ -369,7 +371,7 @@ function _velocidad(max:number,min:number){
 function _checkTraccion(traccion:string, tiempo:string){
 
     switch(traccion){
-        case 'mediana':
+        case 'media':
             if(tiempo === 'humedo'){
                 return 4;
             }else{
